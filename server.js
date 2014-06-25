@@ -1,5 +1,6 @@
 var net = require('net');
 var func = require('./functions.js');
+var Ami = require('./ami.js');
 
 var thread = {};
 var _id = null;
@@ -11,9 +12,10 @@ var server = net.createServer(function(stream) {
   console.log(func.formatedLog(_id, 'connected'));
 
   stream.on('connect', function() {
-    stream.write('Asterisk Call Manager/1.1 #' + _id + '\r\n');
+    var ami = new Ami('Asterisk Call Manager/1.1 #' + _id + '\r\n', '', '');
+    stream.write(ami.title);
     thread[_id] = setInterval(function() {
-      stream.write('[' + new Date() + '] - ' + func.randomString(32) + '\r\n');
+      stream.write(ami.incoming('techsupport', '', '' , ''));
     }, 1000);
   });
 
